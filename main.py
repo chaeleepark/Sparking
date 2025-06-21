@@ -1,20 +1,26 @@
-from flask import Flask, render_template
-
-app = Flask(__name__)
+import streamlit as st
+import pandas as pd
+import plotly.express as px
 
 # Sample data
 patients = [
-    {"name": "Alice Kim", "visits": 3},
-    {"name": "Brian Lee", "visits": 5},
-    {"name": "Carlos Rivera", "visits": 2},
-    {"name": "Dana Patel", "visits": 4}
+    {"Name": "Alice Kim", "Visits": 3},
+    {"Name": "Brian Lee", "Visits": 5},
+    {"Name": "Carlos Rivera", "Visits": 2},
+    {"Name": "Dana Patel", "Visits": 4}
 ]
 
-@app.route("/")
-def home():
-    names = [p["name"] for p in patients]
-    visits = [p["visits"] for p in patients]
-    return render_template("dashboard.html", patients=patients, names=names, visits=visits)
+df = pd.DataFrame(patients)
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# Streamlit app layout
+st.set_page_config(page_title="Healthcare Dashboard", layout="centered")
+st.title("🩺 Healthcare Dashboard")
+
+# Display patient list
+st.subheader("Patient List")
+st.dataframe(df, use_container_width=True)
+
+# Display bar chart
+st.subheader("Visits per Patient")
+fig = px.bar(df, x="Name", y="Visits", color="Name", title="Patient Visits", height=400)
+st.plotly_chart(fig, use_container_width=True)
